@@ -4,7 +4,7 @@ import axios from 'axios'
 import useAuth from './useAuth'
 
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:3000'
+  baseURL: 'https://plant-fhlb7ltnw-maisha-tasnim-khans-projects-8c36c4b4.vercel.app'
   
 })
 
