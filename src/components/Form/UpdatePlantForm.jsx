@@ -1,0 +1,175 @@
+
+
+import toast from 'react-hot-toast'
+import useAxiosSecure from '../../hooks/useAxiosSecure'
+import useAuth from '../../hooks/useAuth'
+import { useEffect, useState } from 'react'
+
+const UpdatePlantForm = ({n}) => {
+  const {user}=useAuth()
+  const [plant , setPlant]=useState(n)
+   const instance = useAxiosSecure()
+  useEffect(()=>{
+   instance.get(`/plants/${n._id}`)
+   .then((res)=>{
+    setPlant(res.data)
+   }) 
+  },[instance,n])
+
+    const name = n.name
+    const category = n.category
+    const description = n.description
+    const price = Number(n.price)
+    const quantity = Number(n.quantity)
+    
+  const plants ={
+    name,  category, description , price, quantity,
+    created_At : new Date().toLocaleString(),
+    userEmail: user.email,
+        photo: user?.photoURL,
+          userName: user?.displayName
+    
+  }
+ 
+  const handelUpdatePlant =async()=>{
+await instance.patch(`/plants/${n._id}`, plants)
+.then((res)=>{
+  console.log(res.data)
+  if(res.data.modifiedCount){
+    toast.success('plant updated')
+  }
+
+})
+  }
+
+ console.log(n)
+ 
+
+  return (
+    <div className='w-full flex flex-col justify-center items-center text-gray-800 rounded-xl bg-gray-50'>
+      <form>
+        <div className='grid grid-cols-1 gap-10'>
+          <div className='space-y-6'>
+            {/* Name */}
+            <div className='space-y-1 text-sm'>
+              <label htmlFor='name' className='block text-gray-600'>
+                Name
+              </label>
+              <input
+                className='w-full px-4 py-3 text-gray-800 border border-lime-300 focus:outline-lime-500 rounded-md bg-white'
+                name='name'
+              defaultValue={plant.name}
+                id='name'
+                type='text'
+                placeholder='Plant Name'
+                required
+              />
+              
+            </div>
+            {/* Category */}
+            <div className='space-y-1 text-sm'>
+              <label htmlFor='category' className='block text-gray-600 '>
+                Category
+              </label>
+              <select
+         defaultValue={plant.category}
+                className='w-full px-4 py-3 border-lime-300 focus:outline-lime-500 rounded-md bg-white'
+                name='category'
+              >
+                <option value='Indoor'>Indoor</option>
+                <option value='Outdoor'>Outdoor</option>
+                <option value='Succulent'>Succulent</option>
+                <option value='Flowering'>Flowering</option>
+              </select>
+            </div>
+            {/* Description */}
+            <div className='space-y-1 text-sm'>
+              <label htmlFor='description' className='block text-gray-600'>
+                Description
+              </label>
+
+              <textarea
+              defaultValue={plant.description}
+                id='description'
+              
+                placeholder='Write plant description here...'
+                className='block rounded-md focus:lime-300 w-full h-32 px-4 py-3 text-gray-800  border border-lime-300 bg-white focus:outline-lime-500 '
+                name='description'
+              ></textarea>
+            </div>
+          </div>
+          <div className='space-y-6 flex flex-col'>
+            {/* Price & Quantity */}
+            <div className='flex justify-between gap-2'>
+              {/* Price */}
+              <div className='space-y-1 text-sm'>
+                <label htmlFor='price' className='block text-gray-600 '>
+                  Price
+                </label>
+                <input
+                defaultValue={plant.price}
+                  className='w-full px-4 py-3 text-gray-800 border border-lime-300 focus:outline-lime-500 rounded-md bg-white'
+                  name='price'
+                  id='price'
+                  type='number'
+               
+                  placeholder='Price per unit'
+                  required
+                />
+              </div>
+
+              {/* Quantity */}
+              <div className='space-y-1 text-sm'>
+                <label htmlFor='quantity' className='block text-gray-600'>
+                  Quantity
+                </label>
+                <input
+                defaultValue={plant.quantity}
+                  className='w-full px-4 py-3 text-gray-800 border border-lime-300 focus:outline-lime-500 rounded-md bg-white'
+                  name='quantity'
+                
+                  id='quantity'
+                  type='number'
+                  placeholder='Available quantity'
+                  required
+                />
+              </div>
+            </div>
+            {/* Image */}
+            <div className=' p-4  w-full  m-auto rounded-lg grow'>
+              <div className='file_upload px-5 py-3 relative border-4 border-dotted border-gray-300 rounded-lg'>
+                <div className='flex flex-col w-max mx-auto text-center'>
+                  <label>
+                    <input
+                      className='text-sm cursor-pointer w-36 hidden'
+                      type='file'
+                 
+                      name='image'
+                      id='image'
+                      accept='image/*'
+                      hidden
+                    />
+                    <div className='bg-lime-500 text-white border border-gray-300 rounded font-semibold cursor-pointer p-1 px-3 hover:bg-lime-500'>
+                      Upload Image
+                    </div>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            {/* Submit Button */}
+            <button
+            onClick={handelUpdatePlant}
+              type='submit'
+              className='w-full cursor-pointer p-3 mt-5 text-center font-medium text-white transition duration-200 rounded shadow-md bg-lime-500 '
+            >
+              Update Plant
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  )
+}
+
+export default UpdatePlantForm
